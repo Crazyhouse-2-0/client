@@ -1,4 +1,4 @@
-import Chessboard from "./Components/Chessboard"
+import Chessboard from "./Components/Chessboard/Chessboard"
 function App() {
   return (
     <Chessboard />

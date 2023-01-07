@@ -6,7 +6,9 @@ import Chessground from '@react-chess/chessground';
 import "chessground/assets/chessground.base.css";
 import "chessground/assets/chessground.brown.css";
 import "chessground/assets/chessground.cburnett.css";
-import { toColor, toDests } from '../Utils/DestUtil/DestUtil';
+import { toColor, toDests } from '../../Utils/DestUtil/DestUtil';
+import { Piece } from '../Pieces/Piece';
+import { PieceRow } from '../Pieces/PieceRow';
 
 //import {toDests, playOtherSide} from '../Utils/DestUtil/DestUtil';
 
@@ -40,7 +42,13 @@ const Chessboard = () => {
 	})
 
 	return (
-	<Chessground width={500} height={500} config={config}/>
+		<div className='w-screen h-screen flex justify-center items-center gap-x-8'>
+			<Chessground width={480} height={480} config={config}/>
+			<div className='h-[480px] flex flex-col justify-between py-[60px]'>
+				<PieceRow color={"b"}/>
+				<PieceRow color={"w"}/>
+			</div>
+		</div>
 	)
 
 }
