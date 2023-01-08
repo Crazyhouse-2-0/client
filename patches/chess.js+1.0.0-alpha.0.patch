@@ -1,0 +1,50 @@
+diff --git a/node_modules/chess.js/dist/chess.d.ts b/node_modules/chess.js/dist/chess.d.ts
+index 97199db..ad7bffe 100644
+--- a/node_modules/chess.js/dist/chess.d.ts
++++ b/node_modules/chess.js/dist/chess.d.ts
+@@ -60,7 +60,7 @@ export declare class Chess {
+     put({ type, color }: {
+         type: PieceSymbol;
+         color: Color;
+-    }, square: Square): boolean;
++    }, square: Square, swapTurn: boolean): boolean;
+     remove(square: Square): Piece;
+     _attacked(color: Color, square: number): boolean;
+     private _isKingAttacked;
+diff --git a/node_modules/chess.js/dist/chess.js b/node_modules/chess.js/dist/chess.js
+index e38722c..2bd3068 100644
+--- a/node_modules/chess.js/dist/chess.js
++++ b/node_modules/chess.js/dist/chess.js
+@@ -527,7 +527,7 @@ class Chess {
+     get(square) {
+         return this._board[Ox88[square]] || false;
+     }
+-    put({ type, color }, square) {
++    put({ type, color }, square, swapTurn = false) {
+         /* check for piece */
+         if (SYMBOLS.indexOf(type.toLowerCase()) === -1) {
+             return false;
+@@ -546,6 +546,13 @@ class Chess {
+         if (type === exports.KING) {
+             this._kings[color] = sq;
+         }
++        if (swapTurn){
++            (this.turn() === 'w') ? this.setTurn('b') : this.setTurn('w'); // setting the turn
++            let tokens = this.fen().split(" "); // retrieve fen
++            tokens[1] = (this.turn() === 'w') ? 'b' : 'w';
++            tokens[3] = "-";
++            this.load(tokens.join(" ")) //load updated fen
++        }
+         this._updateSetup(this.fen());
+         return true;
+     }
+@@ -1572,6 +1579,9 @@ class Chess {
+     turn() {
+         return this._turn;
+     }
++    setTurn(turn){
++        this._turn = turn;
++    }
+     board() {
+         const output = [];
+         let row = [];
