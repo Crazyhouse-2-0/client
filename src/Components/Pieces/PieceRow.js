@@ -6,7 +6,7 @@ export const PieceRow = ({color, withKing}) => {
 	return(
 		<div className="flex bg-slate-300">
 			{pieces.map((p) => {
-				return <Piece color={color} piece={p} />
+				return <Piece color={color} piece={p} key={p} />
 			})}
 		</div>
 	)
