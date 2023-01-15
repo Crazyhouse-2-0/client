@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Chess } from './chess'; 
 
@@ -12,13 +12,11 @@ import { PieceRow } from '../Pieces/PieceRow';
 //import {toDests, playOtherSide} from '../Utils/DestUtil/DestUtil';
 
 const Chessboard = () => {
-	const [fen, setFen] = useState("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	const [chessFen, setChessFen] = useState("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	//const [pendingMove, setPendingMove] = useState()
 	//const [selectVisible, setSelectVisible] = useState(false)
 	//const [lastMove, setLastMove] = useState()
-
-	const chess = new Chess();
-
+	const [chess, setChess] = useState(new Chess());
 	const [config, setConfig] = useState({
 		movable: {
 			color: "white",
@@ -27,8 +25,7 @@ const Chessboard = () => {
 			events: {
 				after: (orig, dest, metadata) => {
 					chess.move({from: orig, to: dest});
-					setFen(chess.fen())
-					setConfig({...config, cgfen: fen, movable: {...config.movable, color: toColor(chess), dests: toDests(chess)}});
+					setChessFen(chess.fen())
 				}
 			}
 		},
@@ -37,13 +34,24 @@ const Chessboard = () => {
 		draggable: {
 			showGhost: true
 		},
-		cgfen: fen,
+		fen: chessFen,
+		drawable : {
+			enabled: true,
+			visible: true,
+			defaultSnapToValidMove: true,
+			eraseOnClick: true,
+		},
 	})
+
+	useEffect(() => {
+		chess.load(chessFen)
+		setConfig({...config, fen: chessFen, movable: {...config.movable, color: toColor(chess), dests: toDests(chess)}})
+	}, [chessFen])
 
 	const addPiece = (color, piece, square) => {
 		console.log(chess.put({type: piece, color: color}, square, true));
 		console.log(chess.fen())
-		setConfig({...config, cgfen: chess.fen()});
+		setConfig({...config, fen: chess.fen(), movable: {...config.movable, color: toColor(chess), dests: toDests(chess)}});
 	}
 
 	return (

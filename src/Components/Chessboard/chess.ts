@@ -66,7 +66,7 @@ type InternalMove = {
   flags: number
 }
 
-interface History {
+type History = {
   move: InternalMove
   kings: Record<Color, number>
   turn: Color
@@ -518,12 +518,12 @@ export class Chess {
     this._updateSetup(this.fen())
   }
 
-  load(fen: string, keepHeaders = false) {
+  load(fen: string, keepHeaders = false, force = true) {
     const tokens = fen.split(/\s+/)
     const position = tokens[0]
     let square = 0
 
-    if (!validateFen(fen).valid) {
+    if (!validateFen(fen).valid && !force) {
       return false
     }
 
@@ -673,7 +673,7 @@ export class Chess {
       type == KING &&
       !(this._kings[color] == EMPTY || this._kings[color] == sq)
     ) {
-      return true
+      return false
     }
 
     this._board[sq] = { type: type as PieceSymbol, color: color as Color }
@@ -683,15 +683,18 @@ export class Chess {
     }
 
     if (swapTurn){
-      //(this.turn() === 'w') ? this.setTurn('b') : this.setTurn('w'); // setting the turn
       let tokens = this.fen().split(" "); // retrieve fen
       tokens[1] = (this.turn() === 'w') ? 'b' : 'w';
       tokens[3] = "-";
       this.load(tokens.join(" ")) //load updated fen
   }
-    this._updateSetup(this.fen())
+    this._updateSetup(this.fen());
 
-    return false
+    if (swapTurn){
+      this._turn = (this.turn() === 'w') ? 'w' : 'b';
+      console.log(this.turn())
+    }
+    return true
   }
 
   remove(square: Square) {
